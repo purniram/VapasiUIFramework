@@ -1,8 +1,7 @@
 package tests;
 
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.*;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,9 +12,10 @@ public class BaseTest {
     String url = "https://spree-vapasi.herokuapp.com";
     // private ChromeDriver;
 
-    @BeforeTest
+    @BeforeMethod
     public void setup()
     {
+        System.out.println("Setting up driver before test");
         String currentUsersWorkingDir = System.getProperty("user.dir");
         System.out.println("Dir is " + currentUsersWorkingDir);
         System.setProperty("webdriver.chrome.driver",currentUsersWorkingDir+"/src/test/resources/chromedriver");
@@ -28,9 +28,10 @@ public class BaseTest {
         driver.get(url);
     }
 
-    @AfterTest
+    @AfterMethod
     public void tearDown()
     {
+        System.out.println ("Quitting all browsers");
         driver.close();
         driver.quit();
     }

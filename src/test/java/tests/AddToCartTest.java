@@ -38,6 +38,12 @@ public class AddToCartTest extends BaseTest{
         assertTrue(lineItem.findElement(By.id("order_line_items_attributes_0_quantity")).getAttribute("value").equals("1"));
     }
 
+    @Test
+    public void SampleTest()
+    {
+        System.out.println ("Sample");
+    }
+
     private void addProduct(String category, String product) {
         openBrowser(url);
         WebElement bagsCategory = driver.findElement(By.linkText(category));
@@ -50,7 +56,7 @@ public class AddToCartTest extends BaseTest{
         addToCartBtn.click();
 
         String title = driver.getTitle();
-        assertEquals(title, "Ruby on Rails Bag - Spree Demo Site");
+        assertEquals(title, "Ruby on Rails Tote - Spree Demo Site");
 
         System.out.println(title);
     }
