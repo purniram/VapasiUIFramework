@@ -17,13 +17,7 @@ public class SimpleLoginTest extends BaseTest {
 
         openBrowser(url);
         ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
-        prdtListingPage.clickOnLogin();
-
-        LoginPage loginPage = new LoginPage(driver);
-
-        loginPage.login(userName,password);
-
-        assertTrue(prdtListingPage.isMyAccountDisplayed(), "Login failed");
+        assertTrue(prdtListingPage.clickOnLogin().login(userName,password).isMyAccountDisplayed(), "Login failed");
 
     }
 

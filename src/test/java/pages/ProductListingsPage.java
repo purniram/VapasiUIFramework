@@ -1,21 +1,23 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 public class ProductListingsPage {
 
-    private ChromeDriver driver;
+    private WebDriver driver;
 
-    public ProductListingsPage(ChromeDriver driver) {
+    public ProductListingsPage(WebDriver driver) {
 
         this.driver = driver;
     }
 
-    public void clickOnLogin ()
+    public LoginPage clickOnLogin ()
     {
         driver.findElement(By.id("link-to-login")).click();
+        return new LoginPage(driver);
     }
 
     public boolean isMyAccountDisplayed() {
@@ -24,15 +26,17 @@ public class ProductListingsPage {
         return myAccount.isDisplayed();
     }
 
-    public void SelectCategory(String category) {
+    public ProductListingsPage SelectCategory(String category) {
         WebElement bagsCategory = driver.findElement(By.linkText(category));
         bagsCategory.click();
+        return new ProductListingsPage(driver);
     }
 
-    public void clickOnProduct(String product)
+    public ProductDescriptionPage clickOnProduct(String product)
     {
         WebElement item = driver.findElement(By.linkText(product));
 
         item.click();
+        return new ProductDescriptionPage(driver);
     }
 }

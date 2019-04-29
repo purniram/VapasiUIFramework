@@ -25,26 +25,20 @@ public class AddToCartTest extends BaseTest{
     String quantity = "3";
 
     @Test(groups="sample")
+
     public void testAddToCartGuest()
     {
-        openBrowser(url);
         ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
-        prdtListingPage.SelectCategory(category);
-        prdtListingPage.clickOnProduct(product);
-
-        ProductDescriptionPage prdtDescriptionPage = new ProductDescriptionPage(driver);
-        prdtDescriptionPage.addToCart(quantity);
-
         ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
-        List<WebElement> lineItems = shoppingCartPage.getItemsFromCart();
 
-        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
+        openBrowser(url);
 
-        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
+        List<WebElement> lineItems = prdtListingPage.SelectCategory(category).clickOnProduct(product).addToCart(quantity).getItemsFromCart();
 
-        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
-        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
+        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);
+
     }
+
 
     @Test
     public void testAddtoCartwithLogin()
@@ -52,32 +46,12 @@ public class AddToCartTest extends BaseTest{
         openBrowser(url);
 
         ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
-        prdtListingPage.clickOnLogin();
-
-        LoginPage loginPage = new LoginPage(driver);
-
-        loginPage.login(userName,password);
-        assertTrue(prdtListingPage.isMyAccountDisplayed(), "Login failed");
-
         ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
-        shoppingCartPage.clearCart(url);
 
-        prdtListingPage.SelectCategory(category);
-        prdtListingPage.clickOnProduct(product);
+        prdtListingPage.clickOnLogin().login(userName,password);
 
-        ProductDescriptionPage prdtDescriptionPage = new ProductDescriptionPage(driver);
-        prdtDescriptionPage.addToCart(quantity);
-
-        List<WebElement> lineItems = shoppingCartPage.getItemsFromCart();
-
-        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
-
-        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
-
-        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
-
-        System.out.println(shoppingCartPage.getLineItemQuantity(lineItem));
-        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
-
+        List<WebElement> lineItems = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).
+                                      addToCart(quantity).getItemsFromCart();
+        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);
     }
 }

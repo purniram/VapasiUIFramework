@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class ShoppingCartPage {
 
@@ -27,10 +28,10 @@ public class ShoppingCartPage {
         WebElement CartContainer = driver.findElement(By.id("cart-detail"));
         List<WebElement> lineItems = CartContainer.findElements(By.id("line_items"));
 
-        for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
+        /*for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
             WebElement product = lineItem.next();
             System.out.println("Item Title: " + driver.findElement(By.tagName("a")).getText());
-        }
+        } */
         return lineItems;
     }
 
@@ -55,26 +56,34 @@ public class ShoppingCartPage {
         return itemQuantity;
     }
 
-    /*
-    public void gotoShoppingCartPage ()
-    {
-        driver.get("https://spree-vapasi.herokuapp.com/cart");
-    } */
-
-
-    public void clearCart(String url)
+    public ProductListingsPage clearCart(String url)
 
     {
+        By emptyCart = By.className("alert alert-info");
         driver.get("https://spree-vapasi.herokuapp.com/cart");
-        driver.findElement(By.name("commit")).click();
 
-        driver.get(url);
+       // System.out.println("is shopping cart empty: "+ driver.findElement(By.linkText("Your cart is empty")).getText());
 
-       // WebDriverWait wait=new WebDriverWait(driver, 5);
+        if(( driver.findElement(By.name("commit")).isDisplayed())) {
+            driver.findElement(By.name("commit")).click();
+          //  WebDriverWait wait=new WebDriverWait(driver, 5);
+           // wait.until(ExpectedConditions.visibilityOfElementLocated(emptyCart));
 
+        }
 
+        driver.findElement(By.linkText("Continue shopping")).click();
+        return new ProductListingsPage(driver);
 
+    }
 
+    public void assertItemsInCart(List<WebElement> lineItems, ShoppingCartPage shoppingCartPage, String quantity) {
+
+        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
+
+        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
+
+        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
+        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
 
     }
 }

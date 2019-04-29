@@ -13,13 +13,15 @@ public class ProductDescriptionPage {
         this.driver = driver;
     }
 
-    public void addToCart(String quantity)
+    public ShoppingCartPage addToCart(String quantity)
     {
     WebElement addToCartBtn = driver.findElement(By.id("add-to-cart-button"));
         WebElement qty = driver.findElement(By.id("quantity"));
         qty.clear();
         qty.sendKeys(quantity);
         addToCartBtn.click();
+
+        return new ShoppingCartPage(driver);
      }
 
 
