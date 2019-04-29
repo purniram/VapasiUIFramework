@@ -3,26 +3,29 @@ package tests;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.testng.annotations.*;
+import pages.LoginPage;
+import pages.ProductListingsPage;
 
 import static org.testng.Assert.assertTrue;
 
 
 public class SimpleLoginTest extends BaseTest {
 
-    @Test
+
+    @Test(groups="sample")
     public void testLogin(){
 
         openBrowser(url);
-        driver.findElement(By.id("link-to-login")).click();
-        driver.findElement(By.id("spree_user_email")).sendKeys("spree@example.com");
-        driver.findElement(By.id("spree_user_password")).sendKeys("spree123");
-        driver.findElement(By.name("commit")).click();
+        ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
+        prdtListingPage.clickOnLogin();
 
-        WebElement myAccount = driver.findElement(By.linkText("My Account"));
-        String myAccountText = myAccount.getText();
-       // assertTrue( myAccountText.equals("My Account"), "My Account exists");
-        assertTrue(myAccount.isDisplayed(), "Logged in successfully");
+        LoginPage loginPage = new LoginPage(driver);
+
+        loginPage.login(userName,password);
+
+        assertTrue(prdtListingPage.isMyAccountDisplayed(), "Login failed");
 
     }
+
 
 }

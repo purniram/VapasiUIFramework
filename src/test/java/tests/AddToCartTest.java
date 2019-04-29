@@ -6,6 +6,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import pages.LoginPage;
+import pages.ProductDescriptionPage;
+import pages.ProductListingsPage;
+import pages.ShoppingCartPage;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,48 +20,62 @@ import static org.testng.AssertJUnit.assertEquals;
 
 public class AddToCartTest extends BaseTest{
 
-    @Test
-    public void testItemClickAndAddToCart()
+    String category = "Bags";
+    String product = "Ruby on Rails Tote";
+    String quantity = "3";
 
+    @Test(groups="sample")
+    public void testAddToCartGuest()
     {
-        addProduct("Bags", "Ruby on Rails Tote");
-
-        WebElement CartContainer = driver.findElement(By.id("cart-detail")) ;
-        List<WebElement> lineItems  = CartContainer.findElements(By.id("line_items"));
-
-        for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
-            WebElement product =  lineItem.next();
-            //System.out.print
-        }
-
-        assertTrue(lineItems.size() == 1);
-
-        WebElement lineItem = lineItems.get(0);
-
-        assertTrue(lineItem.findElement(By.linkText("Ruby on Rails Tote")).isDisplayed());
-        assertTrue(lineItem.findElement(By.id("order_line_items_attributes_0_quantity")).getAttribute("value").equals("1"));
-    }
-
-    @Test
-    public void SampleTest()
-    {
-        System.out.println ("Sample");
-    }
-
-    private void addProduct(String category, String product) {
         openBrowser(url);
-        WebElement bagsCategory = driver.findElement(By.linkText(category));
-        bagsCategory.click();
+        ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
+        prdtListingPage.SelectCategory(category);
+        prdtListingPage.clickOnProduct(product);
 
-        WebElement item = driver.findElement(By.linkText(product));
-        item.click();
+        ProductDescriptionPage prdtDescriptionPage = new ProductDescriptionPage(driver);
+        prdtDescriptionPage.addToCart(quantity);
 
-        WebElement addToCartBtn = driver.findElement(By.id("add-to-cart-button"));
-        addToCartBtn.click();
+        ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
+        List<WebElement> lineItems = shoppingCartPage.getItemsFromCart();
 
-        String title = driver.getTitle();
-        assertEquals(title, "Ruby on Rails Tote - Spree Demo Site");
+        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
 
-        System.out.println(title);
+        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
+
+        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
+        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
+    }
+
+    @Test
+    public void testAddtoCartwithLogin()
+    {
+        openBrowser(url);
+
+        ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
+        prdtListingPage.clickOnLogin();
+
+        LoginPage loginPage = new LoginPage(driver);
+
+        loginPage.login(userName,password);
+        assertTrue(prdtListingPage.isMyAccountDisplayed(), "Login failed");
+
+        ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
+        shoppingCartPage.clearCart();
+
+        prdtListingPage.SelectCategory(category);
+        prdtListingPage.clickOnProduct(product);
+
+        ProductDescriptionPage prdtDescriptionPage = new ProductDescriptionPage(driver);
+        prdtDescriptionPage.addToCart(quantity);
+
+        List<WebElement> lineItems = shoppingCartPage.getItemsFromCart();
+
+        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
+
+        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
+
+        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
+        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
+
     }
 }
