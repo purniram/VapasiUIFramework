@@ -3,9 +3,14 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
 
@@ -57,12 +62,19 @@ public class ShoppingCartPage {
     } */
 
 
-    public void clearCart()
+    public void clearCart(String url)
 
     {
         driver.get("https://spree-vapasi.herokuapp.com/cart");
-        driver.findElement(By.id("clear_cart_link")).click();
+        driver.findElement(By.name("commit")).click();
 
-       // assertEquals( driver.findElement(By.linkText("Your cart is empty")).getText(), "Your cart is empty");
+        driver.get(url);
+
+       // WebDriverWait wait=new WebDriverWait(driver, 5);
+
+
+
+
+
     }
 }

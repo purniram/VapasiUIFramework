@@ -60,7 +60,7 @@ public class AddToCartTest extends BaseTest{
         assertTrue(prdtListingPage.isMyAccountDisplayed(), "Login failed");
 
         ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
-        shoppingCartPage.clearCart();
+        shoppingCartPage.clearCart(url);
 
         prdtListingPage.SelectCategory(category);
         prdtListingPage.clickOnProduct(product);
@@ -75,6 +75,8 @@ public class AddToCartTest extends BaseTest{
         WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
 
         assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
+
+        System.out.println(shoppingCartPage.getLineItemQuantity(lineItem));
         assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
 
     }
