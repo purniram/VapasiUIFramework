@@ -2,7 +2,10 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 public class LoginPage {
 
@@ -10,18 +13,30 @@ public class LoginPage {
     public LoginPage(WebDriver driver) {
 
         this.driver = driver;
+        PageFactory.initElements( driver, this);
 
     }
 
-   // WebElement userName =  driver.findElement(By.id("spree_user_email"));
-  //  WebElement password = driver.findElement(By.id("spree_user_password"));
-   // WebElement loginButton = driver.findElement(By.name("commit"));
+    @FindBy (id = "spree_user_email")
+    WebElement userEmail;
 
-    public ProductListingsPage login(String username, String password) {
+    @FindBy (id = "spree_user_password")
+    WebElement password;
 
-        driver.findElement(By.id("spree_user_email")).sendKeys(username);
-        driver.findElement(By.id("spree_user_password")).sendKeys(password);
-        driver.findElement(By.name("commit")).click();
+    @FindBy (name = "commit")
+    WebElement loginButton;
+
+
+    public ProductListingsPage login(String username, String userpassword) {
+
+        //driver.findElement(By.id("spree_user_email")).sendKeys(username);
+        //driver.findElement(By.id("spree_user_password")).sendKeys(password);
+        //driver.findElement(By.name("commit")).click();
+
+        userEmail.sendKeys(username);
+        password.sendKeys(userpassword);
+        loginButton.click();
+
         return new ProductListingsPage(driver);
     }
 

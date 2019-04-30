@@ -1,16 +1,13 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -18,20 +15,76 @@ import static org.testng.Assert.assertTrue;
 public class ShoppingCartPage {
 
     WebDriver driver;
+    private String CartUrl = "https://spree-vapasi.herokuapp.com/cart";
 
     public ShoppingCartPage(WebDriver driver) {
 
         this.driver = driver;
     }
 
-    public List<WebElement> getItemsFromCart() {
+    public ProductListingsPage clearCart(String url)
+
+    {
+
+        driver.get(CartUrl);
+
+        try{
+            driver.findElement(By.xpath("//input[@value='Empty Cart']")).isDisplayed();
+            driver.findElement(By.xpath("//input[@value='Empty Cart']")).click();
+          //  WebDriverWait wait=new WebDriverWait(driver, 5);
+           // wait.until(ExpectedConditions.visibilityOfElementLocated(emptyCart));
+
+        }
+        catch( Exception e) {
+            System.out.println (e.toString() );
+
+        }
+
+        driver.findElement(By.linkText("Continue shopping")).click();
+        return new ProductListingsPage(driver);
+    }
+
+    public List<Product> getCartDetails() {
+
+        List<Product> cartDetails = new ArrayList<Product>();
         WebElement CartContainer = driver.findElement(By.id("cart-detail"));
         List<WebElement> lineItems = CartContainer.findElements(By.id("line_items"));
 
-        /*for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
+        for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
+            WebElement prdElement = lineItem.next();
+            Product product = new Product();
+
+            product.productName = prdElement.findElement(By.className("cart-item-description")).getText();
+           // product.productPrice = prdElement.findElement(By.className("lead text-primary cart-item-price")).getText();
+            product.productQuantity= prdElement.findElement(By.id("order_line_items_attributes_0_quantity")).getAttribute("value");
+          //  product.productTotalPrice = prdElement.findElement(By.className("lead text-primary cart-item-total")).getText();
+
+            cartDetails.add(product);
+
+        }
+
+        return cartDetails;
+    }
+
+    public int noOfProductsInCart (List<Product> cartDetails)
+    {
+        return cartDetails.size();
+    }
+
+    public Product firstProductInCart (List<Product> cartDetails)
+    {
+        return cartDetails.get(0);
+    }
+
+    /*public List<WebElement> getItemsFromCart() {
+
+        WebElement CartContainer = driver.findElement(By.id("cart-detail"));
+        List<WebElement> lineItems = CartContainer.findElements(By.id("line_items"));
+
+        *//*for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
             WebElement product = lineItem.next();
             System.out.println("Item Title: " + driver.findElement(By.tagName("a")).getText());
-        } */
+        } *//*
         return lineItems;
     }
 
@@ -54,36 +107,6 @@ public class ShoppingCartPage {
     {
         String itemQuantity = lineItem.findElement(By.id("order_line_items_attributes_0_quantity")).getAttribute("value");
         return itemQuantity;
-    }
+    }*/
 
-    public ProductListingsPage clearCart(String url)
-
-    {
-        By emptyCart = By.className("alert alert-info");
-        driver.get("https://spree-vapasi.herokuapp.com/cart");
-
-       // System.out.println("is shopping cart empty: "+ driver.findElement(By.linkText("Your cart is empty")).getText());
-
-        if(( driver.findElement(By.name("commit")).isDisplayed())) {
-            driver.findElement(By.name("commit")).click();
-          //  WebDriverWait wait=new WebDriverWait(driver, 5);
-           // wait.until(ExpectedConditions.visibilityOfElementLocated(emptyCart));
-
-        }
-
-        driver.findElement(By.linkText("Continue shopping")).click();
-        return new ProductListingsPage(driver);
-
-    }
-
-    public void assertItemsInCart(List<WebElement> lineItems, ShoppingCartPage shoppingCartPage, String quantity) {
-
-        assertTrue(lineItems.size() == 1 , "No of items in cart should be 1"); // assert there is only one item in cart
-
-        WebElement lineItem = shoppingCartPage.getFirstLineItem( lineItems); //getting the first line item
-
-        assertTrue(shoppingCartPage.getLineItem(lineItem).isDisplayed(), "the item is not showing in cart"); // is item displayed
-        assertTrue(shoppingCartPage.getLineItemQuantity(lineItem).equals(quantity), "the quantity is not matching"); // is quantity matching
-
-    }
 }

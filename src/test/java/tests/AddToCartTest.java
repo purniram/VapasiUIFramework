@@ -6,10 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import pages.LoginPage;
-import pages.ProductDescriptionPage;
-import pages.ProductListingsPage;
-import pages.ShoppingCartPage;
+import pages.*;
 
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +20,7 @@ public class AddToCartTest extends BaseTest{
     String category = "Bags";
     String product = "Ruby on Rails Tote";
     String quantity = "3";
+    int noOfProductsInCart = 1;
 
     @Test(groups="sample")
 
@@ -33,12 +31,14 @@ public class AddToCartTest extends BaseTest{
 
         openBrowser(url);
 
-        List<WebElement> lineItems = prdtListingPage.SelectCategory(category).clickOnProduct(product).addToCart(quantity).getItemsFromCart();
+        List<Product> cartDetails = prdtListingPage.SelectCategory(category).clickOnProduct(product).addToCart(quantity).getCartDetails();
+        Product pdt = shoppingCartPage.firstProductInCart(cartDetails);
 
-        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);
+        assertEquals( shoppingCartPage.noOfProductsInCart(cartDetails),noOfProductsInCart);
+        assertEquals(pdt.getProductQuantity(), quantity);
+        assert(pdt.getProductName().contains(product));
 
     }
-
 
     @Test
     public void testAddtoCartwithLogin()
@@ -50,8 +50,17 @@ public class AddToCartTest extends BaseTest{
 
         prdtListingPage.clickOnLogin().login(userName,password);
 
-        List<WebElement> lineItems = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).
+        List<Product> cartDetails = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).addToCart(quantity).getCartDetails();
+        Product pdt = shoppingCartPage.firstProductInCart(cartDetails);
+
+        assertEquals( shoppingCartPage.noOfProductsInCart(cartDetails),noOfProductsInCart);
+        assertEquals(pdt.getProductQuantity(), quantity);
+        assert(pdt.getProductName().contains(product));
+
+        /*List<WebElement> lineItems = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).
                                       addToCart(quantity).getItemsFromCart();
-        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);
+
+
+        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);*/
     }
 }
