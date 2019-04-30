@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.*;
 
@@ -22,13 +23,14 @@ public class AddToCartTest extends BaseTest{
     String quantity = "3";
     int noOfProductsInCart = 1;
 
-    @Test(groups="sample")
+    @Test(groups="sample", dataProvider = "getCategoryAndProduct")
 
-    public void testAddToCartGuest()
+    public void testAddToCartGuest(String category, String product)
     {
         ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
         ShoppingCartPage shoppingCartPage = new ShoppingCartPage(driver);
 
+        //shoppingCartPage.clearCart();
         openBrowser(url);
 
         List<Product> cartDetails = prdtListingPage.SelectCategory(category).clickOnProduct(product).addToCart(quantity).getCartDetails();
@@ -50,17 +52,23 @@ public class AddToCartTest extends BaseTest{
 
         prdtListingPage.clickOnLogin().login(userName,password);
 
-        List<Product> cartDetails = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).addToCart(quantity).getCartDetails();
+        List<Product> cartDetails = shoppingCartPage.clearCart().SelectCategory(category).clickOnProduct(product).addToCart(quantity).getCartDetails();
         Product pdt = shoppingCartPage.firstProductInCart(cartDetails);
 
         assertEquals( shoppingCartPage.noOfProductsInCart(cartDetails),noOfProductsInCart);
         assertEquals(pdt.getProductQuantity(), quantity);
         assert(pdt.getProductName().contains(product));
 
-        /*List<WebElement> lineItems = shoppingCartPage.clearCart(url).SelectCategory(category).clickOnProduct(product).
-                                      addToCart(quantity).getItemsFromCart();
+    }
 
 
-        shoppingCartPage.assertItemsInCart(lineItems,shoppingCartPage,quantity);*/
+    @DataProvider(name = "getCategoryAndProduct")
+    public Object[][] getCategoryAndProduct ()
+    {
+        return new Object[][] {
+                {"Bags" , "Ruby on Rails Bag"},
+                {"Mugs", "Ruby on Rails Mug"}
+
+        };
     }
 }

@@ -1,6 +1,7 @@
 package tests;
 
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.ITestResult;
 import org.testng.annotations.*;
 
 import java.util.concurrent.TimeUnit;
@@ -13,8 +14,8 @@ public class BaseTest {
     String userName = "spree@example.com";
     String password = "spree123";
     // private ChromeDriver;
-
-    @BeforeClass(alwaysRun = true)
+    
+    @BeforeMethod(alwaysRun = true)
     public void setup()
     {
         System.out.println("Setting up driver before test");
@@ -30,7 +31,7 @@ public class BaseTest {
         driver.get(url);
     }
 
-    @AfterClass(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
     public void tearDown()
     {
         System.out.println ("Quitting all browsers");
@@ -38,4 +39,17 @@ public class BaseTest {
         driver.quit();
     }
 
+    @AfterMethod(alwaysRun =  true)
+    public void captureScreenShotIfFails(ITestResult result)
+    {
+    if (result.getStatus()== ITestResult.FAILURE)
+    {
+        takeScreenshot(result);
+    }
+    }
+
+    private void takeScreenshot(ITestResult result) {
+
+
+    }
 }

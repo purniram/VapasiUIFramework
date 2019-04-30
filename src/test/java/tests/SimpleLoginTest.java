@@ -21,5 +21,24 @@ public class SimpleLoginTest extends BaseTest {
 
     }
 
+    @Test ( dataProvider = "invalidLoginUserAndPassword")
+    public void testInvalidLogin ( String username, String password)
+    {
+        openBrowser(url);
+        ProductListingsPage prdtListingPage = new ProductListingsPage(driver);
+        prdtListingPage.clickOnLogin().login(username,username);
 
+        assertTrue ( driver.findElement(By.className("alert-error")).isDisplayed());
+
+    }
+
+  @DataProvider(name = "invalidLoginUserAndPassword")
+   public Object[][] getInvalidLoginUserNameAndPassword ()
+   {
+      return new Object[][] {
+              {"spree@example.com" , "spree"},
+              {"example@spree.com", "exmple"}
+
+    };
+   }
 }

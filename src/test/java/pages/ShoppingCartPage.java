@@ -4,6 +4,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
+import org.openqa.selenium.support.PageFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,9 +23,13 @@ public class ShoppingCartPage {
     public ShoppingCartPage(WebDriver driver) {
 
         this.driver = driver;
+        PageFactory.initElements(driver, this);
     }
 
-    public ProductListingsPage clearCart(String url)
+    @FindBys( @FindBy( id ="line_items"))
+    private List<WebElement> cartitems;
+
+    public ProductListingsPage clearCart()
 
     {
 
@@ -47,17 +54,17 @@ public class ShoppingCartPage {
     public List<Product> getCartDetails() {
 
         List<Product> cartDetails = new ArrayList<Product>();
-        WebElement CartContainer = driver.findElement(By.id("cart-detail"));
-        List<WebElement> lineItems = CartContainer.findElements(By.id("line_items"));
+        //WebElement CartContainer = driver.findElement(By.id("cart-detail"));
+        List<WebElement> lineItems = cartitems;
 
         for (Iterator<WebElement> lineItem = lineItems.iterator(); lineItem.hasNext(); ) {
             WebElement prdElement = lineItem.next();
             Product product = new Product();
 
             product.productName = prdElement.findElement(By.className("cart-item-description")).getText();
-           // product.productPrice = prdElement.findElement(By.className("lead text-primary cart-item-price")).getText();
+            product.productPrice = prdElement.findElement(By.className("cart-item-price")).getText();
             product.productQuantity= prdElement.findElement(By.id("order_line_items_attributes_0_quantity")).getAttribute("value");
-          //  product.productTotalPrice = prdElement.findElement(By.className("lead text-primary cart-item-total")).getText();
+            product.productTotalPrice = prdElement.findElement(By.className("cart-item-total")).getText();
 
             cartDetails.add(product);
 
