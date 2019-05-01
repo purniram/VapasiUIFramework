@@ -1,28 +1,33 @@
 package tests;
 
-import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.*;
+import utils.GetConfigProperties;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class BaseTest {
+import static org.testng.internal.Utils.copyFile;
 
+public class BaseTest extends GetConfigProperties {
 
-    ChromeDriver driver;
-    String url = "https://spree-vapasi.herokuapp.com";
-    String userName = "spree@example.com";
-    String password = "spree123";
-    // private ChromeDriver;
-    
+    WebDriver driver;
+    String url = getUrl();
+    String userName = readConfigFile().getProperty("username"); //"spree@example.com";
+    String password = readConfigFile().getProperty("password");//"spree123";
+
+    public BaseTest() throws IOException {
+    }
+
     @BeforeMethod(alwaysRun = true)
     public void setup()
     {
-        System.out.println("Setting up driver before test");
-        String currentUsersWorkingDir = System.getProperty("user.dir");
-        System.out.println("Dir is " + currentUsersWorkingDir);
-        System.setProperty("webdriver.chrome.driver",currentUsersWorkingDir+"/src/test/resources/chromedriver");
-        driver = new ChromeDriver();
+        driver = getDriver();
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
@@ -50,6 +55,16 @@ public class BaseTest {
 
     private void takeScreenshot(ITestResult result) {
 
+        String filePath =  System.getProperty("user.dir")+ "/target/" ;
+        File scrFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        //The below method will save the screen shot in target folder with test method name
+        try {
 
+            FileUtils.copyFile(scrFile, new File(filePath+result.getName().toString().trim()+".png"));
+            System.out.println("***Placed screen shot in "+filePath+" ***");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 }

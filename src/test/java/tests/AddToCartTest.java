@@ -9,6 +9,7 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pages.*;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +23,9 @@ public class AddToCartTest extends BaseTest{
     String product = "Ruby on Rails Tote";
     String quantity = "3";
     int noOfProductsInCart = 1;
+
+    public AddToCartTest() throws IOException {
+    }
 
     @Test(groups="sample", dataProvider = "getCategoryAndProduct")
 
@@ -66,7 +70,7 @@ public class AddToCartTest extends BaseTest{
     public Object[][] getCategoryAndProduct ()
     {
         return new Object[][] {
-                {"Bags" , "Ruby on Rails Bag"},
+                {"Bag" , "Ruby on Rails Bag"},
                 {"Mugs", "Ruby on Rails Mug"}
 
         };
